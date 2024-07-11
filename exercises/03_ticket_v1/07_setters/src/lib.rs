@@ -11,22 +11,6 @@ pub struct Ticket {
 
 impl Ticket {
     pub fn new(title: String, description: String, status: String) -> Ticket {
-        if title.is_empty() {
-            panic!("Title cannot be empty");
-        }
-        if title.len() > 50 {
-            panic!("Title cannot be longer than 50 bytes");
-        }
-        if description.is_empty() {
-            panic!("Description cannot be empty");
-        }
-        if description.len() > 500 {
-            panic!("Description cannot be longer than 500 bytes");
-        }
-        if status != "To-Do" && status != "In Progress" && status != "Done" {
-            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
-        }
-
         Ticket {
             title,
             description,
@@ -44,6 +28,48 @@ impl Ticket {
 
     pub fn status(&self) -> &String {
         &self.status
+    }
+
+    pub fn set_title(&mut self, title: String) {
+        self.title = Ticket::validate_title(title.clone());
+    }
+
+    pub fn set_description(&mut self, description: String) {
+        self.description = Ticket::validate_description(description.clone());
+    }
+
+    pub fn set_status(&mut self, status: String) {
+        self.status = Ticket::validate_status(status);
+    }
+
+    fn validate_title(title: String) -> String {
+        if title.is_empty() {
+            panic!("Title cannot be empty");
+        }
+        if title.len() > 50 {
+            panic!("Title cannot be longer than 50 bytes");
+        }
+
+        title
+    }
+
+    fn validate_description(description: String) -> String {
+        if description.is_empty() {
+            panic!("Description cannot be empty");
+        }
+        if description.len() > 500 {
+            panic!("Description cannot be longer than 500 bytes");
+        }
+
+        description
+    }
+
+    fn validate_status(status: String) -> String {
+        if status != "To-Do" && status != "In Progress" && status != "Done" {
+            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
+        }
+
+        status
     }
 }
 
