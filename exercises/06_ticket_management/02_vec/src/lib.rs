@@ -1,3 +1,5 @@
+use std::mem;
+
 // Given a number `n`, return the `n+1`th number in the Fibonacci sequence.
 //
 // The Fibonacci sequence is defined as follows:
@@ -11,11 +13,27 @@
 // We expect `fibonacci(0)` to return `0`, `fibonacci(1)` to return `1`,
 // `fibonacci(2)` to return `1`, and so on.
 pub fn fibonacci(n: u32) -> u32 {
-    // TODO: implement the `fibonacci` function
-    //
-    // Hint: use a `Vec` to memoize the results you have already calculated
-    // so that you don't have to recalculate them several times.
-    todo!()
+    let mut memo: Vec<u32> = vec![];
+    let mut result = 0;
+
+    if n == 0 {
+        return 0;
+    }
+
+    if n == 1 {
+        return 1;
+    }
+
+    memo.push(0);
+    memo.push(1);
+
+    for index in 2..=usize::try_from(n).unwrap() {
+        let sum = memo[index - 1] + memo[index - 2];
+        memo.push(sum);
+        result = sum;
+    }
+
+    result
 }
 
 #[cfg(test)]
