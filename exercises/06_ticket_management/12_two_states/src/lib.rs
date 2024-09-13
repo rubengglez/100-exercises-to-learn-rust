@@ -6,6 +6,9 @@
 // You also need to add a `get` method that takes as input a `TicketId`
 // and returns an `Option<&Ticket>`.
 
+use core::time;
+use std::time::{SystemTime, UNIX_EPOCH};
+
 use ticket_fields::{TicketDescription, TicketTitle};
 
 #[derive(Clone)]
@@ -14,7 +17,7 @@ pub struct TicketStore {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct TicketId(u64);
+pub struct TicketId(u128);
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Ticket {
@@ -44,8 +47,30 @@ impl TicketStore {
         }
     }
 
-    pub fn add_ticket(&mut self, ticket: Ticket) {
+    pub fn add_ticket(&mut self, ticket: TicketDraft) -> TicketId {
+        let id = self.generate_ticket_id();
+        let ticket = Ticket {
+            id,
+            title: ticket.title,
+            description: ticket.description,
+            status: Status::ToDo,
+        };
+
         self.tickets.push(ticket);
+
+        id
+    }
+
+    pub fn get(&self, id: TicketId) -> Option<&Ticket> {
+        self.tickets.iter().find(|t| t.id == id)
+    }
+
+    fn generate_ticket_id(&self) -> TicketId {
+        let id = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        TicketId(id)
     }
 }
 
